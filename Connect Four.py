@@ -1,10 +1,12 @@
+import random
+
 Board = []
 Col1 = []
 Col2 = []
 Col3 = []
 Col4 = []
 Col5 = []
-Col6 = []    #Working on CheckAdj
+Col6 = []    #Working on CheckAdj - Maybe?
 Col7 = []
 
 def Col(Num) :
@@ -43,24 +45,35 @@ def NotFullCol(Col) :
     if '*' in Col :
         return True
     else :
-        print('full')
         return False
 
 def PlayPiece(Col, FP) :
     if NotFullCol(Col) :
         Col[Col.index('*')] = Piece(FP) #Sets first value of blank to correct piece
         #print('placed')
+    else :
+        print('col full')
+        Turn(FP)
+
+def Turn(FP) :
+    #num = int(input('Which col? '))
+    num = int(random.randint(1,7))
+    PlayPiece(Col(num), FP)
+    PrintBoard()
+    return num
 
 def CheckHoriWin(FP) :
     #TestCol = ['O','X','X','X','X','*','*']
 
     WinCon = 0
     for C in range(1,8) : #Go through each collumn
+        WinCon = 0
         for P in Col(C) : #go through each spot -            for P in TestCol : 
             if P == Piece(FP) : #check if piece is there -   'X' : 
                 WinCon += 1
                 if WinCon >= 4 :
                     print(Piece(FP) + ' Won')
+                    print('Col: ' + str(C))
                     return True # Found win
             else :
                 WinCon = 0
@@ -70,12 +83,14 @@ def CheckVirtWin(FP) :
 
     WinCon = 0
     for R in range(0,7) : #Goes through each Row
+        WinCon = 0
         for C in range(1,8) : #Goes through each Col
             #print(Col(C))
             if Col(C)[R] == Piece(FP) : #if piece in there
                 WinCon += 1
                 if WinCon >= 4 :
                     print(Piece(FP) + ' Won')
+                    print('Col: ' + str(C) + ' Row: ' + str(R))
                     return True # Found win
             else :
                 WinCon = 0
@@ -101,11 +116,15 @@ def LtoRCheck(P) :
     WinNum = 0
     for C in range(1,5) : #Column
         for S in range(0,4) : #Spot
+            WinNum = 0
             for i in range(0,4) : #move
+                #print('Col: ' + str((int(C) + int(i))) + ' Row: ' + str(int(S) + int(i) + 1))
                 if P == Col(C + i)[S + i] :
                     WinNum += 1
+                    #print('WinNum: ' + str(WinNum))
                     if WinNum >= 4 :
                         print(P + ' WON')
+                        print('Col: ' + str(C) + ' LtR')
                         return True
                 else :
                     WinNum = 0
@@ -120,12 +139,14 @@ def RtoLCheck(P) :
     WinNum = 0
     for C in range(1,5) : #Column
         for S in range(3,7) : #Spot
+            WinNum = 0
             for i in range(0,4) : #move
                 if S - i >= 0 :
                     if P == Col(C + i)[S - i] :
                         WinNum += 1
                         if WinNum >= 4 :
                             print(P + ' WON')
+                            print('Col: ' + str(C) + ' RtL')
                             return True
                     else :
                         WinNum = 0
@@ -157,12 +178,6 @@ def PrintBoard() :
     for C in Bd :
         print(C)
 
-def Turn(FP) :
-    num = int(input('Which col? '))
-    PlayPiece(Col(num), FP)
-    PrintBoard()
-    return num
-
 def Play() :
     FP = False
     GameEnd = False
@@ -176,5 +191,6 @@ def Play() :
         ColNum = Turn(FP)
         if CheckWin(FP, ColNum) :
             GameEnd = True
-    
+
+ 
 Play()
