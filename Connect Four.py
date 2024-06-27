@@ -1,8 +1,8 @@
-import random, pygame, sys
+import random, pygame, sys, time
 from pygame.locals import *
 
 #             NOTES
-# - We want to make it so the user can play their piece by clicking on a row
+# - We want to make it so the user can play their piece by clicking on a row - In Turn()
 # 
 
 
@@ -18,58 +18,11 @@ board_rect = pygame.Rect(0,0,800,800)
 board_pic = pygame.image.load("Connect4Board.png").convert()
 board_img = pygame.transform.scale(board_pic, (800, 850))
 
-c1_surf = pygame.Surface((50,50))
+c_rect = pygame.Rect(365,5,74,74)
+c_surf = pygame.surface.Surface((74,74))
+c_surf.fill((255,255,255))
 
-
-a7 = pygame.Rect(0,0, 50,50)
-a6 = pygame.Rect(50,0, 50,50)
-a5 = pygame.Rect(100,0, 50,50)
-a4 = pygame.Rect(150,0, 50,50)
-a3 = pygame.Rect(200,0, 50,50)
-a2 = pygame.Rect(250,0, 50,50)
-a1 = pygame.Rect(300,0, 50,50)
-b7 = pygame.Rect(0,50, 50,50)
-b6 = pygame.Rect(50,50, 50,50)
-b5 = pygame.Rect(100,50, 50,50)
-b4 = pygame.Rect(150,50, 50,50)
-b3 = pygame.Rect(200,50, 50,50)
-b2 = pygame.Rect(250,50, 50,50)
-b1 = pygame.Rect(300,50, 50,50) 
-c7 = pygame.Rect(0,100, 50,50)
-c6 = pygame.Rect(50,100, 50,50)
-c5 = pygame.Rect(100,100, 50,50)
-c4 = pygame.Rect(150,100, 50,50)
-c3 = pygame.Rect(200,100, 50,50)
-c2 = pygame.Rect(250,100, 50,50)
-c1 = pygame.Rect(300,100, 50,50) 
-d7 = pygame.Rect(0,150, 50,50)
-d6 = pygame.Rect(50,150, 50,50)
-d5 = pygame.Rect(100,150, 50,50)
-d4 = pygame.Rect(150,150, 50,50)
-d3 = pygame.Rect(200,150, 50,50)
-d2 = pygame.Rect(250,150, 50,50)
-d1 = pygame.Rect(300,150, 50,50) 
-e7 = pygame.Rect(0,200, 50,50)
-e6 = pygame.Rect(50,200, 50,50)
-e5 = pygame.Rect(100,200, 50,50)
-e4 = pygame.Rect(150,200, 50,50)
-e3 = pygame.Rect(200,200, 50,50)
-e2 = pygame.Rect(250,200, 50,50)
-e1 = pygame.Rect(300,200, 50,50) 
-f7 = pygame.Rect(0,250, 50,50)
-f6 = pygame.Rect(50,250, 50,50)
-f5 = pygame.Rect(100,250, 50,50)
-f4 = pygame.Rect(150,250, 50,50)
-f3 = pygame.Rect(200,250, 50,50)
-f2 = pygame.Rect(250,250, 50,50)
-f1 = pygame.Rect(300,250, 50,50) 
-g7 = pygame.Rect(0,300, 50,50)
-g6 = pygame.Rect(50,300, 50,50)
-g5 = pygame.Rect(100,300, 50,50)
-g4 = pygame.Rect(150,300, 50,50)
-g3 = pygame.Rect(200,300, 50,50)
-g2 = pygame.Rect(250,300, 50,50)
-g1 = pygame.Rect(300,300, 50,50)
+font = pygame.font.Font(None, 64)
 
 Board = []
 Col1 = []
@@ -123,12 +76,15 @@ def PlayPiece(Col, FP) :
         Col[Col.index('*')] = Piece(FP) #Sets first value of blank to correct piece
         #print('placed')
     else :
-        print('col full')
-        Turn(FP)
+        #print('col full')
+        #Turn(FP)
+        pass
 
 def Turn(FP) :
     #num = int(input('Which col? '))
-    num = int(random.randint(1,7))
+    #print piece on top on screen based on turn
+    #
+    num = int(random.randint(1,7)) # - Change to pick
     PlayPiece(Col(num), FP)
     PrintBoard()
     return num
@@ -249,25 +205,73 @@ def PrintBoard() :
     for C in Bd :
         print(C)
 
-def InitPieces() :
-    #pygame.draw.circle(a1, (0, 255, 0), [300, 300], 170, 0)
-    piece = pygame.Surface((50,50))
-    piece.fill((255,0,0))
-    screen.blit(piece, a7.topleft)
+def PygameLoop(FP, end=False) :
+    keys = pygame.key.get_pressed()
+    num = None
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            sys.exit(0)
+        if keys[pygame.K_ESCAPE]:
+            sys.exit(0)
+        if keys[pygame.K_1]:
+            num = 1
+        if keys[pygame.K_2]:
+            num = 2
+        if keys[pygame.K_3]:
+            num = 3
+        if keys[pygame.K_4]:
+            num = 4
+        if keys[pygame.K_5]:
+            num = 5
+        if keys[pygame.K_6]:
+            num = 6
+        if keys[pygame.K_7]:
+            num = 7
+
+    screen.blit(board_img,board_rect)
+    screen.blit(c_surf,c_rect)
+    if FP :
+        yellow = 0
+        text = 'Yellow Won!'
+    else :
+        yellow = 255
+        text = 'Red Won!'
+    if end :
+        win = font.render(text, False, (0,0,0))
+        win_rect = win.get_rect()
+        win_rect.center = (400,35)
+        pygame.draw.circle(c_surf, (255,255,255), [37,37], 37, 0)
+        screen.blit(win,win_rect.topleft)
+    else :
+        pygame.draw.circle(c_surf, (255,yellow,0), [37,37], 37, 0) #c_init
+    #pygame.draw.circle(screen, (255,0,0), [100,762], 45, 0)
+    #pygame.draw.circle(screen, (255,255,0), [200,250], 45, 0)
+    ConvertBoard()
+    pygame.display.flip()
+    clock.tick(60)
+    return num
+
 
 def Play() :
-    FP = False
+    FP = True
     GameEnd = False
     GenBoard()
-    PrintBoard()
+    #PrintBoard()
     while not GameEnd :
-        if FP :
-            FP = False
-        else :
-            FP = True
-        ColNum = Turn(FP)
-        if CheckWin(FP, ColNum) :
-            GameEnd = True
+        #time.sleep(0.5) # - For looks
+        #ColNum = Turn(FP)
+        ColNum = PygameLoop(FP)
+        if ColNum != None :
+            PlayPiece(Col(ColNum), FP)
+            if CheckWin(FP, ColNum) :
+                GameEnd = True
+
+            if FP :
+                FP = False
+            else :
+                FP = True
+    while True:
+        PygameLoop(FP,True)
 
 def ConvertBoard() :
     for R in range(0,7) : #Goes through each Row
@@ -283,23 +287,3 @@ def ConvertBoard() :
 
 
 Play()
-
-while True:
-    keys = pygame.key.get_pressed()
-
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            sys.exit(0)
-        if keys[pygame.K_ESCAPE]:
-            sys.exit(0)
-
-    #InitPieces()
-
-    screen.blit(board_img,board_rect)
-    #c1 = pygame.draw.circle(screen, (255,0,0), [100,251], 45, 0)
-    #c1 = pygame.draw.circle(screen, (255,0,0), [100,762], 45, 0)
-    #c2 = pygame.draw.circle(screen, (255,255,0), [200,250], 45, 0)
-    ConvertBoard()
-    pygame.display.flip()
-    clock.tick(60)
-    #Play()
