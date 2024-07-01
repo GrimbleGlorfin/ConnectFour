@@ -1,9 +1,14 @@
-import random, pygame, sys, time
+import pygame, sys
 from pygame.locals import *
 
 #             NOTES
-# - We want to make it so the user can play their piece by clicking on a row - In Turn()
+# - To play use numbers 1-7 to place piece - to quit press Q
 # 
+#           Need to add:
+#   - play 2 sounds
+#   - use 4 more files
+#   - feature movement?
+
 
 
 
@@ -74,20 +79,9 @@ def NotFullCol(Col) :
 def PlayPiece(Col, FP) :
     if NotFullCol(Col) :
         Col[Col.index('*')] = Piece(FP) #Sets first value of blank to correct piece
-        #print('placed')
+        return True
     else :
-        #print('col full')
-        #Turn(FP)
-        pass
-
-def Turn(FP) :
-    #num = int(input('Which col? '))
-    #print piece on top on screen based on turn
-    #
-    num = int(random.randint(1,7)) # - Change to pick
-    PlayPiece(Col(num), FP)
-    PrintBoard()
-    return num
+        return False
 
 def CheckHoriWin(FP) :
     #TestCol = ['O','X','X','X','X','*','*']
@@ -124,16 +118,6 @@ def CheckVirtWin(FP) :
             #print(WinCon)
                  
 def CheckDiaWin(FP, colNum) :
-    '''
-    #Find spot in column
-    col = Col(colNum)
-    if '*' in col :
-        Spot = col.index('*') - 1
-    else :
-        Spot = 6
-    #CheckAdj(Piece(FP), Spot, colNum, WinNum)
-    #UpDiaCheck(Piece(FP), Spot, colNum)
-    '''
     if LtoRCheck(Piece(FP)) :
         return True
     if RtoLCheck(Piece(FP)) :
@@ -192,19 +176,6 @@ def CheckWin(FP, colNum) :
     if CheckDiaWin(FP, colNum) :
         return True
 
-def PrintBoard() :
-    #print('PB')
-    print('-----------------------------------')
-    Bd = []
-    for R in range(0,7) : #Goes through each Row
-        E = []
-        for C in range(1,8) : #Goes through each Col
-            E.append(Col(C)[R])
-        #print(E)
-        Bd.insert(0,E)
-    for C in Bd :
-        print(C)
-
 def PygameLoop(FP, end=False) :
     keys = pygame.key.get_pressed()
     num = None
@@ -212,6 +183,8 @@ def PygameLoop(FP, end=False) :
         if event.type == QUIT:
             sys.exit(0)
         if keys[pygame.K_ESCAPE]:
+            sys.exit(0)
+        if keys[pygame.K_q]:
             sys.exit(0)
         if keys[pygame.K_1]:
             num = 1
@@ -256,20 +229,18 @@ def Play() :
     FP = True
     GameEnd = False
     GenBoard()
-    #PrintBoard()
     while not GameEnd :
-        #time.sleep(0.5) # - For looks
         #ColNum = Turn(FP)
         ColNum = PygameLoop(FP)
         if ColNum != None :
-            PlayPiece(Col(ColNum), FP)
-            if CheckWin(FP, ColNum) :
-                GameEnd = True
-
-            if FP :
-                FP = False
-            else :
-                FP = True
+            #Turn(ColNum, FP)
+            if PlayPiece(Col(ColNum), FP) :
+                if CheckWin(FP, ColNum) :
+                    GameEnd = True
+                if FP :
+                    FP = False
+                else :
+                    FP = True
     while True:
         PygameLoop(FP,True)
 
