@@ -18,7 +18,7 @@ screen = pygame.display.set_mode(resolution)
 
 #Sounds:
 chip_sound = pygame.mixer.Sound("chip_sound.wav")
-win_sound = pygame.mixer.Sound("Player_win.wav")
+
 pygame.mixer.music.load('BackgroundMusic.mp3')
 def play_background_music(loop=True):
     if loop:
